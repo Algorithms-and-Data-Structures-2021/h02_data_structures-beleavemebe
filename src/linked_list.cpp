@@ -9,21 +9,24 @@ namespace itis {
 
     void LinkedList::Add(Element e) {
         auto node = new Node(e, nullptr);
-        if (size_ == 0) {
+        if (head_ == nullptr) {
             head_ = node;
             tail_ = head_;
+            size_ = 1;
         } else {
             tail_ -> next = node;
             tail_ = node;
+            size_++;
         }
-        size_++;
     }
 
     void LinkedList::Insert(int index, Element e) {
         internal::check_out_of_range(index, 0, size_ + 1);
-        if (size_ == 0) {
-            head_ = new Node(e, nullptr);
-            tail_ = head_;
+        if (head_ == nullptr) {
+            auto node = new Node(e, nullptr);
+            head_ = node;
+            tail_ = node;
+            size_ = 0;
         } else if (index == 0) {
             Node *node = new Node(e, head_);
             head_ = node;
@@ -31,7 +34,7 @@ namespace itis {
             Add(e);
             return;
         } else {
-            Node *n = find_node(index);
+            Node *n = find_node(index - 1);
             auto new_Node = new Node(e, n -> next);
             n -> next = new_Node;
         }
@@ -40,38 +43,37 @@ namespace itis {
 
     void LinkedList::Set(int index, Element e) {
         internal::check_out_of_range(index, 0, size_);
-        find_node(index) -> data = e;
+        auto node = find_node(index);
+        node -> data = e;
     }
 
     Element LinkedList::Remove(int index) {
         internal::check_out_of_range(index, 0, size_);
         Node *nodeToDelete;
+        Element e;
         if (index == 0) {
             nodeToDelete = head_;
+            e = head_ -> data;
             head_ = head_ -> next;
         } else {
             Node *prev_Node = find_node(index - 1);
             nodeToDelete = prev_Node -> next;
+            e = nodeToDelete -> data;
             prev_Node -> next = nodeToDelete -> next;
         }
         size_--;
-        Element e = nodeToDelete -> data;
         delete nodeToDelete;
         return e;
     }
 
     void LinkedList::Clear() {
-        // Tip 1: люди в черном (MIB) пришли стереть вам память
-        // напишите свой код здесь ...
         Node *current = head_;
-        Node *next;
-        while (current != nullptr)
-        {
-            next = current -> next;
+        for (int i = 0; i < size_; ++i) {
+            auto next = current -> next;
             delete current;
             current = next;
         }
-        delete head_;
+        delete current;
         head_ = nullptr;
         tail_ = nullptr;
         size_ = 0;
@@ -79,7 +81,8 @@ namespace itis {
 
     Element LinkedList::Get(int index) const {
         internal::check_out_of_range(index, 0, size_);
-        return find_node(index) -> data;
+        auto node = find_node(index);
+        return node -> data;
     }
 
     int LinkedList::IndexOf(Element e) const {
