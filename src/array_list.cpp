@@ -12,7 +12,6 @@ namespace itis {
         if (capacity <= 0) {
             throw std::invalid_argument("ArrayList::capacity must be positive");
         }
-        capacity_ = capacity;
         data_ = new Element[capacity_];
         std::fill(data_, data_ + capacity, Element::UNINITIALIZED);
         size_ = 0;
@@ -20,7 +19,6 @@ namespace itis {
 
     ArrayList::~ArrayList() {
         delete[] data_;
-        data_ = nullptr;
         size_ = 0;
         capacity_ = 0;
     }
@@ -35,10 +33,6 @@ namespace itis {
     void ArrayList::Insert(int index, Element e) {
         if (index != 0 && index != size_) {
             internal::check_out_of_range(index, 0, size_);
-        }
-        if (index == size_) {
-            Add(e);
-            return;
         }
         if (size_ == capacity_) resize(capacity_ + kCapacityGrowthCoefficient);
         assert(size_ < capacity_);  // я ни в коем случае не дам вам совершить ошибку всей вашей жизни
@@ -55,9 +49,9 @@ namespace itis {
     Element ArrayList::Remove(int index) {
         internal::check_out_of_range(index, 0, size_);
         Element deletedElement = data_[index];
-        std::copy(data_ + index, data_ + size_, data_ + index - 1);
-        data_[size_ - 1] = Element::UNINITIALIZED;
+        std::copy(data_ + index + 1, data_ + size_, data_ + index);
         size_--;
+        data_[size_] = Element::UNINITIALIZED;
         return deletedElement;
     }
 
@@ -73,8 +67,7 @@ namespace itis {
 
     int ArrayList::IndexOf(Element e) const {
         for (int i = 0; i < size_; ++i) {
-            auto elem = *(data_ + i);
-            if (elem == e) return i;
+            if (data_[i] == e) return i;
         }
         return kNotFoundElementIndex;
     }

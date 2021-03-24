@@ -83,27 +83,24 @@ namespace itis {
     }
 
     int LinkedList::IndexOf(Element e) const {
-        // напишите свой код здесь ...
-        Node *result = head_;
-        int i = 0;
-        while (i < size_ && result -> data != e) {
-            result = result -> next;
-            i++;
+        auto node = head_;
+        for (int i = 0; i < size_; ++i) {
+            if (node -> data == e) return i;
+             node = node -> next;
         }
-        return i == size_ ? kNotFoundElementIndex : i;
+        return kNotFoundElementIndex;
     }
 
     Node *LinkedList::find_node(int index) const {
         assert(index >= 0 && index < size_);
-        // Tip 1: можете сразу обработать случаи поиска начала и конца списка
-        // напишите свой код здесь ...
         if (index == 0) return head_;
         if (index == size_ - 1) return tail_;
         Node *result = head_;
-        while (index > 0) {
+        for (int i = 0; i < index; i++)
+        {
             result = result -> next;
-            index--;
         }
+        
         return result;
     }
 
