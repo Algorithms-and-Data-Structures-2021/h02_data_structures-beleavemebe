@@ -8,11 +8,7 @@
 namespace itis {
 
     void LinkedList::Add(Element e) {
-        // Tip 1: создайте узел в куче со переданным значением
-        // Tip 2: есть 2 случая - список пустой и непустой
-        // Tip 3: не забудьте обновить поля head и tail
-        // напишите свой код здесь ...
-        auto *node = new Node(e, nullptr);
+        auto node = new Node(e, nullptr);
         if (size_ == 0) {
             head_ = node;
             tail_ = head_;
@@ -27,6 +23,7 @@ namespace itis {
         internal::check_out_of_range(index, 0, size_ + 1);
         if (size_ == 0) {
             head_ = new Node(e, nullptr);
+            tail_ = head_;
         } else if (index == 0) {
             Node *node = new Node(e, head_);
             head_ = node;
@@ -34,9 +31,9 @@ namespace itis {
             Add(e);
             return;
         } else {
-            Node *node = find_node(index - 1);
-            Node *newNode = new Node(e, node -> next);
-            node -> next = newNode;
+            Node *n = find_node(index);
+            auto new_Node = new Node(e, n -> next);
+            n -> next = new_Node;
         }
         size_++;
     }
@@ -67,8 +64,10 @@ namespace itis {
         // Tip 1: люди в черном (MIB) пришли стереть вам память
         // напишите свой код здесь ...
         Node *current = head_;
-        while(current != nullptr) {
-            Node *next = current -> next;
+        Node *next;
+        while (current != nullptr)
+        {
+            next = current -> next;
             delete current;
             current = next;
         }

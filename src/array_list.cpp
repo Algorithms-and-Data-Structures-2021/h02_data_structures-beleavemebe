@@ -12,17 +12,13 @@ namespace itis {
         if (capacity <= 0) {
             throw std::invalid_argument("ArrayList::capacity must be positive");
         }
-        // Tip 1: используйте std::fill для заполнения выделенных ячеек массива значением Element::UNINITIALIZED
-        // здесь должен быть ваш код ...
         capacity_ = capacity;
-        data_ = new Element[size_];
+        data_ = new Element[capacity_];
         std::fill(data_, data_ + capacity, Element::UNINITIALIZED);
-
+        size_ = 0;
     }
 
     ArrayList::~ArrayList() {
-        // Tip 1: высвободите выделенную память
-        // Tip 2: не забудьте про логическую целостность объекта (инвариантность)
         delete[] data_;
         data_ = nullptr;
         size_ = 0;
@@ -30,28 +26,22 @@ namespace itis {
     }
 
     void ArrayList::Add(Element e) {
-        // Tip 1: используйте метод resize(new_capacity) для расширения емкости массива
-        // здесь должен быть ваш код ...
         if (size_ == capacity_) resize(capacity_ + kCapacityGrowthCoefficient);
         assert(size_ < capacity_);  // я здесь, чтобы не дать тебе сойти с правильного пути
-        // напишите свой код после расширения емкости массива здесь ...
         data_[size_] = e;
         size_++;
     }
 
     void ArrayList::Insert(int index, Element e) {
         if (index != 0 && index != size_) {
-            // index = 0 и index == size это особые случаи, при которых всегда можно выполнить операцию вставки
             internal::check_out_of_range(index, 0, size_);
         }
-
-        // Tip 1: используйте метод resize(new_capacity) для расширения емкости массива
-        // напишите свой код здесь ...
+        if (index == size_) {
+            Add(e);
+            return;
+        }
         if (size_ == capacity_) resize(capacity_ + kCapacityGrowthCoefficient);
         assert(size_ < capacity_);  // я ни в коем случае не дам вам совершить ошибку всей вашей жизни
-
-        // Tip 2: для свдига элементов вправо можете использовать std::copy
-        // напишите свой код после расширения емкости массива здесь ...
         std::copy(data_ + index, data_ + size_, data_ + index + 1);
         data_[index] = e;
         size_++;
@@ -59,7 +49,6 @@ namespace itis {
 
     void ArrayList::Set(int index, Element value) {
         internal::check_out_of_range(index, 0, size_);
-        // напишите свой код здесь ...
         data_[index] = value;
     }
 
@@ -73,8 +62,6 @@ namespace itis {
     }
 
     void ArrayList::Clear() {
-        // Tip 1: можете использовать std::fill для заполнения ячеек массива значением  Element::UNINITIALIZED
-        // напишите свой код здесь ...
         std::fill(data_, data_ + capacity_, Element::UNINITIALIZED); // спасибо...
         size_ = 0;
     }
